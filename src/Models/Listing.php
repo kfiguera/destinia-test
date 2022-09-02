@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use \App\Core\Model;
+use Exception;
 use PDO;
 
 class Listing extends Model
@@ -63,5 +64,31 @@ class Listing extends Model
 
     }
 
+    public function create($data)
+    {
+        list($type, $related_id) = $data;
+        try {
+            $this->pdo->beginTransaction();
+            $sql = "INSERT INTO " . $this->table . " (type, related_id) 
+                    VALUES (:type, :related_id)";
+
+            $gsent = $this->pdo->prepare($sql);
+            $gsent->bindParam(':type', $type, PDO::PARAM_STR);
+            $gsent->bindParam(':related_id', $related_id, PDO::PARAM_INT);
+            $gsent->execute();
+
+            $id = $this->pdo->lastInsertId();
+
+            $this->pdo->commit();
+            $return = $this->findById($id);
+
+            return $return;
+
+        } catch (Exception $e) {
+            $this->pdo->rollback();
+            throw $e;
+        }
+
+    }
 
 }

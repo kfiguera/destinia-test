@@ -11,7 +11,7 @@ class DefaultController extends Controller
     public function handle()
     {
         $name = $this->hasParam('name') ? $this->getParam('name') : '';
-
+        $name = substr($name, 0, 3);
         $listing = new Listing();
         $rows = ($name != '') ? $listing->findByName($name) :$listing->all();
         foreach ($rows as $row) {

@@ -40,4 +40,15 @@ abstract class Model
         $data = $gsent->fetch();
         return $data;
     }
+    abstract function create($data);
+
+    public function delete($value) {
+        $sql = "DELETE FROM ".$this->table." WHERE id = ?";
+
+        $gsent = $this->pdo->prepare($sql);
+        $gsent->bindParam(1, $value, PDO::PARAM_INT);
+        $gsent->execute();
+        return true;
+    }
+
 }

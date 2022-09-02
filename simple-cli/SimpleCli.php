@@ -1,6 +1,7 @@
 <?php
 
 namespace SimpleCli;
+
 use SimpleCli\Command\Call;
 use SimpleCli\Command\Controller;
 use SimpleCli\Command\Registry;
@@ -52,19 +53,19 @@ class SimpleCli
 
         if (count($input->args) < 2) {
             $this->printSignature();
-            exit;
+
+        } else {
+            $controller = $this->command_registry->getCallableController($input->command, $input->subcommand);
+
+            if ($controller instanceof Controller) {
+                $controller->boot($this);
+                $controller->run($input);
+                $controller->teardown();
+
+            } else {
+                $this->runSingle($input);
+            }
         }
-
-        $controller = $this->command_registry->getCallableController($input->command, $input->subcommand);
-
-        if ($controller instanceof Controller) {
-            $controller->boot($this);
-            $controller->run($input);
-            $controller->teardown();
-            exit;
-        }
-
-        $this->runSingle($input);
     }
 
     protected function runSingle(Call $input)
@@ -75,7 +76,6 @@ class SimpleCli
         } catch (\Exception $e) {
             $this->getPrinter()->display("ERROR: " . $e->getMessage());
             $this->printSignature();
-            exit;
         }
     }
 

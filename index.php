@@ -7,6 +7,7 @@ if (php_sapi_name() !== 'cli') {
 
 require __DIR__ . '/vendor/autoload.php';
 
+
 use SimpleCli\SimpleCli;
 use SimpleCli\Command\Call;
 
@@ -17,5 +18,4 @@ $app->registerCommand("help", function(Call $call) use ($app) {
     $app->printSignature();
     //print_r($call->params);
 });
-
 $app->runCommand($argv);
